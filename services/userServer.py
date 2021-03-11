@@ -1,4 +1,3 @@
-import pymongo
 from databaseService import DatabaseService
 
 class UserService:
