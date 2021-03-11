@@ -4,6 +4,8 @@ from authomatic import Authomatic
 import authomatic
 import logging
 
+from services.databaseService import DatabaseService
+
 from config import CONFIG
 
 # Instantiate Authomatic.
@@ -11,6 +13,8 @@ authomatic = Authomatic(CONFIG, 'AnderG3h3impi3Hi3rzo!', report_errors=False)
 
 app = Flask(__name__, template_folder='html')
 app.config['SECRET_KEY'] = 'Sup3rgeheimhee!'
+
+db = DatabaseService()
 
 @app.route('/')
 def index():
@@ -36,15 +40,24 @@ def login(provider_name):
     if result:
         if result.user:
             result.user.update()
+            token = 'super geheime token hierzo jeetje zeg'
             session['email'] = result.user.email
-            session['id'] = result.user.id
+            session['googleId'] = result.user.id
             session['name'] = result.user.name
-            session['token'] = 'super geheime token hierzo jeetje zeg'
+            session['token'] = token
+
+            db.get().users.insert_one({
+                'email': result.user.email,
+                'name': result.user.name,
+                'googleId': result.user.id,
+                'token': token
+            })
+
+            return redirect('/')
 
         return render_template('login.html', result=result)
 
     return response
 
-# Run the app on port 5000 on all interfaces, accepting only HTTPS connections
 if __name__ == '__main__':
     app.run(debug=True, ssl_context='adhoc', host='0.0.0.0', port=5000)
