@@ -40,7 +40,7 @@ jobs:
       uses: azure/appservice-build@v2
       with:
         platform: python
-        platform-version: '3.7'
+        platform-version: '3.6'
   
     - name: 'Deploy to Azure WebApp'
       uses: azure/webapps-deploy@v2

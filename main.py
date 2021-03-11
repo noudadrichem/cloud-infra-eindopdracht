@@ -46,13 +46,6 @@ def login(provider_name):
             session['name'] = result.user.name
             session['token'] = token
 
-            db.get().users.insert_one({
-                'email': result.user.email,
-                'name': result.user.name,
-                'googleId': result.user.id,
-                'token': token
-            })
-
             return redirect('/')
 
         return render_template('login.html', result=result)
