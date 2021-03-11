@@ -1,3 +1,4 @@
 flask
 authomatic
 pymongo
+dnspython
