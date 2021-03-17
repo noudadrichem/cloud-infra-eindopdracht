@@ -1,10 +1,13 @@
-from flask import Flask, request, make_response, url_for, redirect, flash, render_template, session
+from flask import Flask, request, make_response, url_for, redirect, flash, render_template, session, jsonify
 from authomatic.adapters import WerkzeugAdapter
 from authomatic import Authomatic
 import authomatic
 import logging
 
 from services.databaseService import DatabaseService
+from services.userService import UserService
+from services.recordService import RecordService
+from services.jwtService import JWTService
 
 from config import CONFIG
 
@@ -15,19 +18,24 @@ app = Flask(__name__, template_folder='html')
 app.config['SECRET_KEY'] = 'Sup3rgeheimhee!'
 
 db = DatabaseService()
+userService = UserService(db)
+recordService = RecordService(db)
+jwtService = JWTService()
 
 @app.route('/')
 def index():
-    print('-__session start')
-    print(session)
-    print('-__session end')
-    return render_template('index.html')
+    user = None
+    print('sesion...', session)
+    if (session.get('googleId') != None):
+        user = userService.getByGoogleId(session.get('googleId'))
+        userRecors = recordService
+        print(user)
+
+    return render_template('index.html', user=user)
 
 @app.route('/login/<provider_name>/', methods=['GET', 'POST'])
 def login(provider_name):
-    # We need response object for the WerkzeugAdapter.
     response = make_response()
-    # Log the user in, pass it the adapter and the provider name.
     result = authomatic.login(
         WerkzeugAdapter(request, response),
         provider_name,
@@ -38,19 +46,44 @@ def login(provider_name):
     print(session)
 
     if result:
+        print('result', result)
         if result.user:
             result.user.update()
-            token = 'super geheime token hierzo jeetje zeg'
-            session['email'] = result.user.email
-            session['googleId'] = result.user.id
-            session['name'] = result.user.name
+            user = userService.getByGoogleId(result.user.id)
+            if user == None:
+                user = userService.create({
+                    'email': result.user.email,
+                    'name': result.user.name,
+                    'googleId': result.user.id,
+                })
+            print('user ID = ', user['_id'])
+            token = jwtService.encode(user['_id'])
             session['token'] = token
 
             return redirect('/')
 
-        return render_template('login.html', result=result)
+        return render_template('login.html', result=user)
 
     return response
+
+
+@app.route('/records/create', methods=['POST'])
+def createRecord():
+    data = request.json
+    payload = jwtService.decode(session['token'])
+    print('payload...', payload)
+    record = recordService.create({
+        **data,
+        'user': session['_id']
+    })
+    return jsonify(record)
+
+@app.route('/records/update', methods=['PUT'])
+def updateRecord():
+    data = request.json
+    print(data)
+    record = recordService.update(data.id, data.body)
+    return jsonify(record)
 
 if __name__ == '__main__':
     app.run(debug=True, ssl_context='adhoc', host='0.0.0.0', port=5000)

@@ -1,11 +1,14 @@
 {% extends "base.html" %}
 {% block body %}
 
-    <!--Links to the login handler-->
-    Login with <a href="login/amazon">Amazon</a>.<br />
     Login with <a href="login/google">Google</a>.<br />
-    Login with <a href="login/linkedin">LinkedIn</a>.<br />
-    Login with <a href="login/twitter">Twitter</a>.<br />
-    Login with <a href="login/facebook">Facebook</a>.<br />
+
+    {% if user %}
+    <h1>Hi {{ user.name }}</h1>
+    <h2>Your id is: {{ user._id }}</h2>
+    <h2>Your email is: {{ user.email }}</h2>
+    <h2>Your google is: {{ user.googleId }}</h2>
+    <h2>Your token is: {{ user.token }}</h2>
+    {% endif %}
 
 {% endblock %}
