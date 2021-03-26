@@ -3,6 +3,7 @@ from authomatic.adapters import WerkzeugAdapter
 from authomatic import Authomatic
 import authomatic
 import logging
+import datetime
 import uuid
 
 from services.databaseService import DatabaseService
@@ -60,25 +61,53 @@ def login(provider_name):
                     'googleId': result.user.id,
                     'token': token
                 })
+            else:
+                user = userService.update(user['_id'], { 'token': token })
             # token = jwtService.encode(user['_id'])
             session['token'] = token
-
-            return redirect('/')
+            session['user'] = user['_id']
+            return redirect('/dashboard')
 
         return render_template('login.html', result=user)
 
     return response
 
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+    user = userService.getById(session['user'])
+    return render_template('dashboard.html', user=user)
+
+@app.route('/records', methods=['GET'])
+def getUserRecords():
+    token = request.headers.get('Token')
+    if token == None:
+        token = session['token']
+
+    print('token...', token)
+    user = userService.getByToken(token)
+    if user == None:
+        return jsonify({ 'message': 'User is None'})
+    records = recordService.getByUserId(str(user['_id']))
+    print('records...', records)
+    return jsonify(records)
 
 @app.route('/records/create', methods=['POST'])
 def createRecord():
     data = request.json
-    payload = jwtService.decode(session['token'])
-    print('payload...', payload)
+    print(data['user'])
+    user = userService.getById(data['user'])
+    print('token equals', user['token'])
+    # TODO token assertion here...(doesn't work from postman because it has no valid oauth session)'
     record = recordService.create({
-        **data,
-        'user': session['_id']
+        'domain': data['domain'],
+        'ipv4': data['ipv4'],
+        'ipv6': data['ipv6'],
+        'user': data['user'],
+        'createdAt': datetime.datetime.now()
     })
+
+    print('created record...', record)
+
     return jsonify(record)
 
 @app.route('/records/update', methods=['PUT'])

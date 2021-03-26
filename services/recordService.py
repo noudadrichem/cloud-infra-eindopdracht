@@ -1,3 +1,5 @@
+from bson.objectid import ObjectId
+
 class RecordService:
     def __init__(self, db):
         self.db = db
@@ -21,3 +23,11 @@ class RecordService:
 
     def get(self):
         return self.db.get().records.find()
+
+    def getByUserId(self, userId):
+        query = { 'user': userId }
+        records = self.db.get().records.find(query)
+        tmp = []
+        for x in records:
+            tmp.append({**x, '_id': str(x['_id'])})
+        return tmp
