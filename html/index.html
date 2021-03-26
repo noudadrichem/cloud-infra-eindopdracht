@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 {% block body %}
 
+<div class="container">
     Login with <a href="login/google">Google</a>.<br />
 
     {% if user %}
-    <h1>Hi {{ user.name }}</h1>
-    <h2>Your id is: {{ user._id }}</h2>
-    <h2>Your email is: {{ user.email }}</h2>
-    <h2>Your google is: {{ user.googleId }}</h2>
-    <h2>Your token is: {{ user.token }}</h2>
+        <h1>Hi {{ user.name }}</h1>
+        <h2>Your id is: {{ user._id }}</h2>
+        <h2>Your email is: {{ user.email }}</h2>
+        <h2>Your google is: {{ user.googleId }}</h2>
+        <h2>Your token is: {{ user.token }}</h2>
+
+        <a href="/dashboard">Go to dashboard</a>
     {% endif %}
+</div>
 
 {% endblock %}

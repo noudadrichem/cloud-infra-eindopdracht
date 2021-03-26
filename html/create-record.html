@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block body %}
+
+{% if user %}
+<!-- 
+        {
+            "subdomain": "www",
+            "ipv4": "2.2.3.3",
+            "ipv6": null,
+            "domain": "anderdomeintje.nl",
+            "user": "605db17ec329eec3c5078e45"
+        }
+     -->
+
+<style>
+    #create-record-form {
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        margin: 0 auto;
+    }
+
+    #create-record-form label {
+        font-size: 12px;
+    }
+
+    #create-record-form input {
+        padding: 8px;
+        margin-bottom: 12px;
+        border-radius: 4px;
+        border: 1px solid grey;
+    }
+
+    #create-record-form button {
+        padding: 12px;
+        font-weight: bold;
+        outline: none;
+        border: none;
+        background-color: #5D99FA;
+        color: white;
+        border-radius: 4px;
+    }
+
+    #message {
+        padding: 8px;
+        background-color: lightblue;
+        border-radius: 4px;
+        margin-bottom: 24px;
+        text-align: center;
+        display: none;
+    }
+
+    #message.success {
+        background-color: #41A241;
+        color: #F8FBF8;
+    }
+
+    #message.error {
+        background-color: #CE3232;
+        color: #FFF7F7;
+    }
+</style>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function (e) {
+        function message(msg, type) {
+            const container = document.querySelector('#message')
+            container.innerText = msg
+            container.className = type
+            container.style.display = 'block'
+            setTimeout(() => {
+                container.style.display = 'none'
+            }, 3500)
+        }
+
+        function onFormSubmit(e) {
+            e.preventDefault()
+            const inputs = form.querySelectorAll('input')
+            const body = [...inputs].reduce(function (prev, input) {
+                prev[input.name] = input.value
+                return prev
+            }, {})
+            console.log('body', body)
+            // TODO post to create record here...
+            fetch('/records/create', {
+                method: 'POST',
+                body: JSON.stringify(body),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
+                .then(s => s.json())
+                .then(response => {
+                    console.log('gelukt...', response)
+                    message('Gelukt!', 'success')
+                })
+                .catch(err => {
+                    console.error(err)
+                    message('Failed...', 'error')
+                })
+            message('Helemaal geupload!', 'error')
+        }
+        const form = document.querySelector('#create-record-form')
+        form.onsubmit = onFormSubmit
+    })
+</script>
+
+<div class="container">
+    <a class="btn secondary" href="/dashboard">Terug...</a>
+
+    <h1>Hi {{ user.name }}, create record here...</h1>
+    <form id="create-record-form">
+        <label for="ipv4">IPV4</label>
+        <input type="text" name="ipv4" placeholder="1.1.1.1">
+        <label for="domain">A record</label>
+        <input type="text" name="domain" placeholder="paulennoud.com">
+        <input type="text" name="subdomain" value="*" placeholder="CNAME" hidden>
+
+        <input type="text" name="ipv6" value="null" placeholder="CNAME" hidden>
+        <input type="text" name="user" value="{{user._id}}" hidden>
+
+        <button type="submit">Submit</button>
+        <span id="message" class="success"></span>
+
+    </form>
+</div>
+
+{% endif %}
+
+{% endblock %}

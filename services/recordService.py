@@ -28,6 +28,6 @@ class RecordService:
         query = { 'user': userId }
         records = self.db.get().records.find(query)
         tmp = []
-        for x in records:
+        for x in records: # TODO  beetje een zooitje
             tmp.append({**x, '_id': str(x['_id'])})
         return tmp

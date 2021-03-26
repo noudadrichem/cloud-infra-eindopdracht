@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block body %}
+
+<div class="container">
+
     <h1>Dashboard</h1>
     {% if user %}
     <p>Hi, {{ user.name }}</p>
@@ -16,72 +19,78 @@
             width: 500px;
             margin: 0 auto;
         }
+
         #records-list li {
             display: flex;
         }
+
         #records-list li span {
             display: flex;
             flex: 1;
         }
+
         #records-list li:first-child {
             font-weight: bolder;
         }
     </style>
 
     <div class="records">
+        <a class="btn primary" href="/dashboard/create">+ Create record...</a>
         <ul id="records-list">Loading dns records...</ul>
     </div>
 
-<script type="text/javascript">
-window.addEventListener('DOMContentLoaded', function(e) {
-// [
-//     {
-//         "_id": "605db96627e307b2e4e3d211",
-//         "createdAt": "Fri, 26 Mar 2021 06:37:26 GMT",
-//         "domain": "superdomein.nl",
-//         "ipv4": "1.1.1.1",
-//         "ipv6": null,
-//         "user": "605db17ec329eec3c5078e45"
-//     },
-//     {
-//         "_id": "605de6c410bd69dc483ae876",
-//         "createdAt": "Fri, 26 Mar 2021 09:51:00 GMT",
-//         "domain": "superdomein.nl",
-//         "ipv4": "1.1.1.1",
-//         "ipv6": null,
-//         "user": "605db17ec329eec3c5078e45"
-//     },
-//     {
-//         "_id": "605de6fab4c2a9e0bfbef146",
-//         "createdAt": "Fri, 26 Mar 2021 09:51:54 GMT",
-//         "domain": "superdomein.nl",
-//         "ipv4": "1.1.1.1",
-//         "ipv6": null,
-//         "user": "605db17ec329eec3c5078e45"
-//     }
-// ]
-    function fetchRecords() {
-        fetch('/records')
-        .then(s => s.json())
-        .then(records => {
-            console.log('records..', records)
-            const recordsList = document.querySelector('#records-list')
-            recordsList.innerHTML = `
-                <li>
-                    <span>IPV4</span>
-                    <span>DOMAIN</span>
-                </li>
-                ${records.map(record => `
+    <script type="text/javascript">
+        window.addEventListener('DOMContentLoaded', function (e) {
+            // [
+            //     {
+            //         "_id": "605db96627e307b2e4e3d211",
+            //         "createdAt": "Fri, 26 Mar 2021 06:37:26 GMT",
+            //         "domain": "superdomein.nl",
+            //         "ipv4": "1.1.1.1",
+            //         "ipv6": null,
+            //         "user": "605db17ec329eec3c5078e45"
+            //     },
+            //     {
+            //         "_id": "605de6c410bd69dc483ae876",
+            //         "createdAt": "Fri, 26 Mar 2021 09:51:00 GMT",
+            //         "domain": "superdomein.nl",
+            //         "ipv4": "1.1.1.1",
+            //         "ipv6": null,
+            //         "user": "605db17ec329eec3c5078e45"
+            //     },
+            //     {
+            //         "_id": "605de6fab4c2a9e0bfbef146",
+            //         "createdAt": "Fri, 26 Mar 2021 09:51:54 GMT",
+            //         "domain": "superdomein.nl",
+            //         "ipv4": "1.1.1.1",
+            //         "ipv6": null,
+            //         "user": "605db17ec329eec3c5078e45"
+            //     }
+            // ]
+            function fetchRecords() {
+                fetch('/records')
+                    .then(s => s.json())
+                    .then(records => {
+                        console.log('records..', records)
+                        const recordsList = document.querySelector('#records-list')
+                        recordsList.innerHTML = `
                     <li>
-                        <span>${record.ipv4}</span>
-                        <span>${record.domain}</span>
+                        <span>A record</span>
+                        <span>IPV4</span>
                     </li>
-                `)}
-            `
+                    ${records.map(record => `
+                        <li>
+                            <span>${record.domain}</span>
+                            <span>${record.ipv4}</span>
+                        </li>
+                    `).join('')}
+                `
+                    })
+            }
+            fetchRecords()
         })
-    }
-    fetchRecords()
-})
-</script>
+    </script>
+</div>
+
 
 {% endblock %}

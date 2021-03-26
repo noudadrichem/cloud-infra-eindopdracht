@@ -5,12 +5,10 @@ import authomatic
 import logging
 import datetime
 import uuid
-
 from services.databaseService import DatabaseService
 from services.userService import UserService
 from services.recordService import RecordService
 from services.jwtService import JWTService
-
 from config import CONFIG
 
 # Instantiate Authomatic.
@@ -24,15 +22,20 @@ userService = UserService(db)
 recordService = RecordService(db)
 jwtService = JWTService()
 
+def getUserFromSes():
+    token = request.headers.get('Token')
+    if token == None:
+        token = session['token']
+    print('token...', token)
+    user = userService.getByToken(token)
+    if user == None:
+        return jsonify({ 'message': 'User is None'})
+    print('user from ses...', user)
+    return user
+
 @app.route('/')
 def index():
-    user = None
-    print('sesion...', session)
-    if (session.get('googleId') != None):
-        user = userService.getByGoogleId(session.get('googleId'))
-        userRecors = recordService
-        print(user)
-
+    user = getUserFromSes()
     return render_template('index.html', user=user)
 
 @app.route('/login/<provider_name>/', methods=['GET', 'POST'])
@@ -44,8 +47,6 @@ def login(provider_name):
         session=session,
         session_saver=lambda: app.save_session(session, response)
     )
-
-    print(session)
 
     if result:
         print('result', result)
@@ -63,7 +64,6 @@ def login(provider_name):
                 })
             else:
                 user = userService.update(user['_id'], { 'token': token })
-            # token = jwtService.encode(user['_id'])
             session['token'] = token
             session['user'] = user['_id']
             return redirect('/dashboard')
@@ -77,32 +77,28 @@ def dashboard():
     user = userService.getById(session['user'])
     return render_template('dashboard.html', user=user)
 
+@app.route('/dashboard/create', methods=['GET'])
+def dashboardCreate():
+    user = userService.getById(session['user'])
+    return render_template('create-record.html', user=user)
+
 @app.route('/records', methods=['GET'])
 def getUserRecords():
-    token = request.headers.get('Token')
-    if token == None:
-        token = session['token']
-
-    print('token...', token)
-    user = userService.getByToken(token)
-    if user == None:
-        return jsonify({ 'message': 'User is None'})
+    user = getUserFromSes()
     records = recordService.getByUserId(str(user['_id']))
     print('records...', records)
     return jsonify(records)
 
 @app.route('/records/create', methods=['POST'])
 def createRecord():
-    data = request.json
-    print(data['user'])
-    user = userService.getById(data['user'])
-    print('token equals', user['token'])
-    # TODO token assertion here...(doesn't work from postman because it has no valid oauth session)'
+    user = getUserFromSes()
+    body = request.json
+    print('body ...', body)
     record = recordService.create({
-        'domain': data['domain'],
-        'ipv4': data['ipv4'],
-        'ipv6': data['ipv6'],
-        'user': data['user'],
+        'domain': body['domain'],
+        'ipv4': body['ipv4'],
+        'ipv6': body['ipv6'],
+        'user': body['user'],
         'createdAt': datetime.datetime.now()
     })
 
