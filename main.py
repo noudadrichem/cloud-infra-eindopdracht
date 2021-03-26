@@ -3,6 +3,7 @@ from authomatic.adapters import WerkzeugAdapter
 from authomatic import Authomatic
 import authomatic
 import logging
+import uuid
 
 from services.databaseService import DatabaseService
 from services.userService import UserService
@@ -50,14 +51,16 @@ def login(provider_name):
         if result.user:
             result.user.update()
             user = userService.getByGoogleId(result.user.id)
+            print('User', user)
+            token = uuid.uuid4().hex
             if user == None:
                 user = userService.create({
                     'email': result.user.email,
                     'name': result.user.name,
                     'googleId': result.user.id,
+                    'token': token
                 })
-            print('user ID = ', user['_id'])
-            token = jwtService.encode(user['_id'])
+            # token = jwtService.encode(user['_id'])
             session['token'] = token
 
             return redirect('/')
