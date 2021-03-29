@@ -24,23 +24,15 @@ jwtService = JWTService()
 
 def getUserFromSes():
     token = request.headers.get('Token')
-    print('tok 1 ', token)
     if token == None:
-        print('tok 2', token, session)
         if session.get('token'):
             token = session.get('token')
-            print('tok 3', token)
         else:
-            print('GO HOME')
             redirect('/')
-    print('tok 4 ', token)
     user = userService.getByToken(token)
-    print('user 4', user)
     if user == None:
-        print('user none.. GO HOME',)
         redirect('/')
-
-    print('USER 5...', user)
+    print('user...', user)
     return user
 
 @app.route('/')
@@ -85,6 +77,7 @@ def login(provider_name):
 # UI
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
+    print('session...', session)
     user = getUserFromSes()
     return render_template('dashboard.html', user=user)
 
@@ -156,4 +149,9 @@ def deleteRecord():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True, ssl_context='adhoc', host='0.0.0.0', port=5000)
+    app.run(
+        debug=True,
+        port=5000,
+        host='0.0.0.0'
+        # ssl_context='adhoc',
+    )
