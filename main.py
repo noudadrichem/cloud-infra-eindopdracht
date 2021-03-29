@@ -24,13 +24,23 @@ jwtService = JWTService()
 
 def getUserFromSes():
     token = request.headers.get('Token')
+    print('tok 1 ', token)
     if token == None:
-        token = session['token']
-    print('token...', token)
+        print('tok 2', token, session)
+        if session.get('token'):
+            token = session.get('token')
+            print('tok 3', token)
+        else:
+            print('GO HOME')
+            redirect('/')
+    print('tok 4 ', token)
     user = userService.getByToken(token)
+    print('user 4', user)
     if user == None:
-        return jsonify({ 'message': 'User is None'})
-    print('user from ses...', user)
+        print('user none.. GO HOME',)
+        redirect('/')
+
+    print('USER 5...', user)
     return user
 
 @app.route('/')
@@ -72,24 +82,34 @@ def login(provider_name):
 
     return response
 
+# UI
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-    user = userService.getById(session['user'])
+    user = getUserFromSes()
     return render_template('dashboard.html', user=user)
 
 @app.route('/dashboard/create', methods=['GET'])
 def dashboardCreate():
-    user = userService.getById(session['user'])
+    user = getUserFromSes()
     return render_template('create-record.html', user=user)
 
 @app.route('/dashboard/update/<record_id>', methods=['GET'])
 def dashboardUpdate(record_id):
     print('Record id...', record_id)
-    user = userService.getById(session['user'])
+    user = getUserFromSes()
     record = recordService.getById(record_id)
     print('record.', record)
     return render_template('update-record.html', user=user, record=record)
 
+@app.route('/dashboard/delete/<record_id>', methods=['GET'])
+def dashboardDelete(record_id):
+    print('Record id...', record_id)
+    user = getUserFromSes()
+    record = recordService.getById(record_id)
+    print('record.', record)
+    return render_template('delete-record.html', user=user, record=record)
+
+# RECORDS REST
 @app.route('/records', methods=['GET'])
 def getUserRecords():
     user = getUserFromSes()
@@ -115,10 +135,25 @@ def createRecord():
 
 @app.route('/records/update', methods=['PUT'])
 def updateRecord():
+    user = getUserFromSes()
+    if user == None:
+        redirect('/')
     body = request.json
     print(body)
     record = recordService.update(body)
     return jsonify(record)
+
+@app.route('/records/delete', methods=['DELETE'])
+def deleteRecord():
+    body = request.json
+    user = getUserFromSes()
+    if user == None:
+        redirect('/')
+    print('Delete record...', body)
+    recordService.delete(body['id'])
+    return jsonify({
+        'message': 'deleted...'
+    })
 
 if __name__ == '__main__':
     app.run(debug=True, ssl_context='adhoc', host='0.0.0.0', port=5000)

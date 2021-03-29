@@ -16,8 +16,8 @@ class RecordService:
         print('record', record)
         return {**record, '_id': str(record['_id'])}
     
-    # def delete(self, recordId):
-    #     return self.db.get().records.delete({ '_id': record['_id'] })
+    def delete(self, recordId):
+        return self.db.get().records.delete_one({ '_id': ObjectId(recordId) })
 
     def getById(self, recordId):
         return self.db.get().records.find_one({ '_id': ObjectId(recordId)})

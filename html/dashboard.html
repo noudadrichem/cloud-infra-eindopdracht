@@ -1,43 +1,50 @@
 {% extends "base.html" %}
 {% block body %}
 
+<style>
+    #records-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 auto;
+    }
+
+    #records-list li:nth-child(odd) {
+        background-color: #F1F1F1;
+    }
+
+    #records-list li {
+        background-color: #FCFCFC;
+        padding: 8px 12px;
+        align-items: center;
+        display: grid;
+        grid-template-columns: 1fr 1fr 88px 12px 88px;
+    }
+
+    #records-list li span {
+        display: inline-flex;
+        flex: 1;
+    }
+
+    #records-list li:first-child {
+        font-weight: bolder;
+    }
+</style>
+
 <div class="container">
-
-    <h1>Dashboard</h1>
-    {% if user %}
-    <p>Hi, {{ user.name }}</p>
-    <p>Your email is: {{ user.email }}</p>
-    <p>Your token is: {{ user.token }}</p>
-    {% endif %}
-
-    <style>
-        #records-list {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            width: 500px;
-            margin: 0 auto;
-        }
-
-        #records-list li {
-            display: flex;
-        }
-
-        #records-list li span {
-            display: flex;
-            flex: 1;
-        }
-
-        #records-list li:first-child {
-            font-weight: bolder;
-        }
-    </style>
-
-    <div class="records">
+    <div class="flex between">
+        <h1>FrogDNS Dashboard</h1>
         <a class="btn primary" href="/dashboard/create">+ Create record...</a>
-        <ul id="records-list">Loading dns records...</ul>
     </div>
+
+    {% if user %}
+        <h2>Hi, {{ user.name }}</h2>
+        <p>Your email is: {{ user.email }}</p>
+        <p>Your token is: {{ user.token }}</p>
+
+        <h2>Your records.</h2>
+        <div class="records">
+            <ul id="records-list">Loading dns records...</ul>
+        </div>
 
     <script type="text/javascript">
         window.addEventListener('DOMContentLoaded', function (e) {
@@ -67,6 +74,8 @@
             //         "user": "605db17ec329eec3c5078e45"
             //     }
             // ]
+        
+
             function fetchRecords() {
                 fetch('/records')
                     .then(s => s.json())
@@ -74,14 +83,18 @@
                         console.log('records..', records)
                         const recordsList = document.querySelector('#records-list')
                         recordsList.innerHTML = `
-                    <li>
-                        <span>A record</span>
-                        <span>IPV4</span>
+                    <li class="header">
+                        <span><h3>A record</h3></span>
+                        <span><h3>IPV4</h3></span>
+                        <span><h3></h3></span>
                     </li>
                     ${records.map(record => `
                         <li>
                             <span>${record.domain}</span>
                             <span>${record.ipv4}</span>
+                            <a class="btn secondary" href="/dashboard/update/${record._id}">Update</a>
+                            <span></span>
+                            <a class="btn secondary danger" href="/dashboard/delete/${record._id}">Delete</a>
                         </li>
                     `).join('')}
                 `
@@ -90,6 +103,8 @@
             fetchRecords()
         })
     </script>
+
+    {% endif %}
 </div>
 
 

@@ -9,7 +9,7 @@
                 font-size: 13px;
                 font-family: 'Open Sans', 'Helvetica', sans-serif;
                 color: #444B52;
-                background-color: #DBE1E8;
+                background-color: #F9F9FC;
             }
 
             .container {
@@ -24,6 +24,41 @@
                 border-radius: 4px;
                 text-decoration: none;
                 font-weight: 500;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                border: none;
+                outline: none;
+                cursor: pointer;
+            }
+
+            .btn.flex {
+                display: flex;
+            }
+
+            .btn.primary {
+                background: #495661;
+                color: white;
+            }
+
+            .btn.secondary {
+                background: #D4E4FA;
+                color: #495661;
+            }
+
+            .btn.danger:hover {
+                background-color: #E76663;
+                color: white;
+            }
+
+            .flex {
+                display: flex;
+            }
+
+            .flex.between {
+                justify-content: space-between;
+                align-items: center;
             }
 
             

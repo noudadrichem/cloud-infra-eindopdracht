@@ -51,7 +51,7 @@
             container.style.display = 'block'
             setTimeout(() => {
                 container.style.display = 'none'
-            }, 3500)
+            }, 5500)
         }
 
         function onFormSubmit(e) {
@@ -75,12 +75,13 @@
                 .then(response => {
                     console.log('gelukt...', response)
                     message('Gelukt!', 'success')
+                    // setTimeout(() => window.location.href = '/', 1000)
+                    form.reset()
                 })
                 .catch(err => {
                     console.error(err)
                     message('Failed...', 'error')
                 })
-            message('Helemaal geupload!', 'error')
         }
         const form = document.querySelector('#create-record-form')
         form.onsubmit = onFormSubmit
@@ -88,9 +89,10 @@
 </script>
 
 <div class="container">
-    <a class="btn secondary" href="/dashboard">Terug...</a>
+    <a class="btn secondary" href="/dashboard">Go back</a>
 
-    <h1>Hi {{ user.name }}, create record here...</h1>
+    <h1>Hi {{ user.name }}</h1>
+    <p>Fill in an ipv4 formatted IP and a domain name to create a record.</p>
     <form id="create-record-form">
         <label for="ipv4">IPV4</label>
         <input type="text" name="ipv4" placeholder="1.1.1.1">
@@ -101,7 +103,7 @@
         <input type="text" name="ipv6" value="null" placeholder="CNAME" hidden>
         <input type="text" name="user" value="{{user._id}}" hidden>
 
-        <button type="submit">Submit</button>
+        <button type="submit">Create record</button>
         <span id="message" class="success"></span>
 
     </form>

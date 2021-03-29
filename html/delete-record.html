@@ -2,45 +2,6 @@
 {% block body %}
 
 {% if user %}
-<!-- 
-        {
-            "subdomain": "www",
-            "ipv4": "2.2.3.3",
-            "ipv6": null,
-            "domain": "anderdomeintje.nl",
-            "user": "605db17ec329eec3c5078e45"
-        }
-     -->
-
-<style>
-    #update-record-form {
-        font-family: sans-serif;
-        display: flex;
-        flex-direction: column;
-        margin: 0 auto;
-    }
-
-    #update-record-form label {
-        font-size: 12px;
-    }
-
-    #update-record-form input {
-        padding: 8px;
-        margin-bottom: 12px;
-        border-radius: 4px;
-        border: 1px solid grey;
-    }
-
-    #update-record-form button {
-        padding: 12px;
-        font-weight: bold;
-        outline: none;
-        border: none;
-        background-color: #5D99FA;
-        color: white;
-        border-radius: 4px;
-    }
-</style>
 
 <script>
     window.addEventListener('DOMContentLoaded', function (e) {
@@ -68,8 +29,8 @@
             }, {})
             console.log('update body...', body)
             // TODO post to create record here...
-            fetch('/records/update', {
-                method: 'PUT',
+            fetch('/records/delete', {
+                method: 'DELETE',
                 body: JSON.stringify(body),
                 headers: {
                     'Accept': 'application/json',
@@ -79,7 +40,7 @@
                 .then(s => s.json())
                 .then(response => {
                     console.log('gelukt...', response)
-                    message('Gelukt!', 'success')
+                    message('Record verwijderd...', 'success')
                     setTimeout(goHome, 700)
                 })
                 .catch(err => {
@@ -96,24 +57,16 @@
     <a class="btn secondary" href="/dashboard">Go back</a>
 
     {% if record %}
-    <h1>Hi {{ user.name }}<h1>
-    <h3>Update record: {{record._id}}</h3>
-    <h3>Current values:</h3>
+    <h1 style="color: #E76663;">Hi {{ user.name }}<h1>
+    <h3>Delete record: {{record._id}}</h3>
+    <h3>With values:</h3>
     <p><b>ipv4:</b>{{record.ipv4}}</p>
     <p><b>domain:</b>{{record.domain}}</p>
 <br/>
     <form id="update-record-form">
-        <label for="ipv4">IPV4</label>
-        <input type="text" name="ipv4" value="{{record.ipv4}}" placeholder="1.1.1.1">
-        <label for="domain">A record</label>
-        <input type="text" name="domain" value="{{record.domain}}" placeholder="paulennoud.com">
-        <input type="text" name="subdomain" value="*" placeholder="CNAME" hidden>
-
-        <input type="text" name="ipv6" value="null" placeholder="CNAME" hidden>
-        <input type="text" name="user" value="{{user._id}}" hidden>
         <input type="text" name="id" value="{{record._id}}" hidden>
 
-        <button type="submit">Update</button>
+        <button class="btn primary danger flex" type="submit">I'm sure I want to delete this record</button>
         <span id="message" class="success"></span>
     </form>
 
