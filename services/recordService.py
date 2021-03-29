@@ -10,8 +10,9 @@ class RecordService:
         print('record', record)
         return {**record, '_id': str(record['_id'])}
     
-    def update(self, recordId, body):
-        record = self.db.get().records.update({'_id': body['_id']}, body)
+    def update(self, body):
+        self.db.get().records.update({'_id': ObjectId(body['id'])}, body)
+        record = self.getById(body['id'])
         print('record', record)
         return {**record, '_id': str(record['_id'])}
     
@@ -19,7 +20,7 @@ class RecordService:
     #     return self.db.get().records.delete({ '_id': record['_id'] })
 
     def getById(self, recordId):
-        return self.db.get().records.find_one({ '_id': recordId})
+        return self.db.get().records.find_one({ '_id': ObjectId(recordId)})
 
     def get(self):
         return self.db.get().records.find()

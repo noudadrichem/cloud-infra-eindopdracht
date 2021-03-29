@@ -54,17 +54,22 @@
             }, 3500)
         }
 
+        function goHome() {
+            window.location.href = '/dashboard'
+        }
+
         function onFormSubmit(e) {
             e.preventDefault()
+            console.log('ON UPDATE FORM SUBMIT...')
             const inputs = form.querySelectorAll('input')
             const body = [...inputs].reduce(function (prev, input) {
                 prev[input.name] = input.value
                 return prev
             }, {})
-            console.log('body', body)
+            console.log('update body...', body)
             // TODO post to create record here...
-            fetch('/records/create', {
-                method: 'POST',
+            fetch('/records/update', {
+                method: 'PUT',
                 body: JSON.stringify(body),
                 headers: {
                     'Accept': 'application/json',
@@ -75,6 +80,9 @@
                 .then(response => {
                     console.log('gelukt...', response)
                     message('Gelukt!', 'success')
+                    setTimeout(() => {
+                        goHome()
+                    }, 1000)
                 })
                 .catch(err => {
                     console.error(err)
@@ -82,29 +90,32 @@
                 })
             message('Helemaal geupload!', 'error')
         }
-        const form = document.querySelector('#create-record-form')
+        const form = document.querySelector('#update-record-form')
         form.onsubmit = onFormSubmit
     })
 </script>
 
 <div class="container">
     <a class="btn secondary" href="/dashboard">Terug...</a>
+    {% if record %}
 
-    <h1>Hi {{ user.name }}, create record here...</h1>
-    <form id="create-record-form">
+    <h1>Hi {{ user.name }}, <br/>Update {{record._id}} here...</h1>
+    <form id="update-record-form">
         <label for="ipv4">IPV4</label>
-        <input type="text" name="ipv4" placeholder="1.1.1.1">
+        <input type="text" name="ipv4" value="{{record.ipv4}}" placeholder="1.1.1.1">
         <label for="domain">A record</label>
-        <input type="text" name="domain" placeholder="paulennoud.com">
+        <input type="text" name="domain" value="{{record.domain}}" placeholder="paulennoud.com">
         <input type="text" name="subdomain" value="*" placeholder="CNAME" hidden>
 
         <input type="text" name="ipv6" value="null" placeholder="CNAME" hidden>
         <input type="text" name="user" value="{{user._id}}" hidden>
+        <input type="text" name="id" value="{{record._id}}" hidden>
 
         <button type="submit">Submit</button>
         <span id="message" class="success"></span>
-
     </form>
+
+    {% endif %}
 </div>
 
 {% endif %}

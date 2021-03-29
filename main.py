@@ -82,6 +82,14 @@ def dashboardCreate():
     user = userService.getById(session['user'])
     return render_template('create-record.html', user=user)
 
+@app.route('/dashboard/update/<record_id>', methods=['GET'])
+def dashboardUpdate(record_id):
+    print('Record id...', record_id)
+    user = userService.getById(session['user'])
+    record = recordService.getById(record_id)
+    print('record.', record)
+    return render_template('update-record.html', user=user, record=record)
+
 @app.route('/records', methods=['GET'])
 def getUserRecords():
     user = getUserFromSes()
@@ -101,16 +109,15 @@ def createRecord():
         'user': body['user'],
         'createdAt': datetime.datetime.now()
     })
-
     print('created record...', record)
 
     return jsonify(record)
 
 @app.route('/records/update', methods=['PUT'])
 def updateRecord():
-    data = request.json
-    print(data)
-    record = recordService.update(data.id, data.body)
+    body = request.json
+    print(body)
+    record = recordService.update(body)
     return jsonify(record)
 
 if __name__ == '__main__':
