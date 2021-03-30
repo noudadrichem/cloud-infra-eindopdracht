@@ -5,6 +5,7 @@ import authomatic
 import logging
 import datetime
 import uuid
+
 from services.databaseService import DatabaseService
 from services.userService import UserService
 from services.recordService import RecordService
@@ -74,7 +75,7 @@ def login(provider_name):
 
     return response
 
-# UI
+# ? UI
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
     print('session...', session)
@@ -88,10 +89,8 @@ def dashboardCreate():
 
 @app.route('/dashboard/update/<record_id>', methods=['GET'])
 def dashboardUpdate(record_id):
-    print('Record id...', record_id)
     user = getUserFromSes()
     record = recordService.getById(record_id)
-    print('record.', record)
     return render_template('update-record.html', user=user, record=record)
 
 @app.route('/dashboard/delete/<record_id>', methods=['GET'])
@@ -102,7 +101,7 @@ def dashboardDelete(record_id):
     print('record.', record)
     return render_template('delete-record.html', user=user, record=record)
 
-# RECORDS REST
+# ? REST
 @app.route('/records', methods=['GET'])
 def getUserRecords():
     user = getUserFromSes()
