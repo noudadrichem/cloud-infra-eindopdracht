@@ -1,5 +1,7 @@
 # Cloud infra eindopdracht
 
+# <a href="http://cim-eindopracht.azurewebsites.net/">http://cim-eindopracht.azurewebsites.net/</a>
+
 > Small demo video : https://jmp.sh/YNGH0X9 More UI below.
 
 > Note: has 192.168.37.100 and 127.0.0.1 Ips whitelisted for Google Auth
@@ -32,6 +34,8 @@
 - Persistence via PyMongo & GUI
 - Containerized via Docker image geupload naar ghcr.io, gebruikt in k8s deployment
 
+## Automations
+Runs deployment on every commit on the `master` branch. Automations are made with Associated Github Actions. This application runs on Azure App Service and the action code is partly given by Azure. Hosted via Gunicorn
 
 ## Images
 <a href="https://ibb.co/QcCLbp1"><img src="https://i.ibb.co/sP6nmbM/Screenshot-2021-03-30-at-16-47-08.png" alt="Screenshot-2021-03-30-at-16-47-08" border="0"></a>
