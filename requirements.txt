@@ -3,3 +3,5 @@ authomatic
 pymongo
 dnspython
 pyjwt==1.4.2
+sentry-sdk
+blinker

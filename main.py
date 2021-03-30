@@ -5,6 +5,8 @@ import authomatic
 import logging
 import datetime
 import uuid
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 from services.databaseService import DatabaseService
 from services.userService import UserService
@@ -14,6 +16,12 @@ from config import CONFIG
 
 # Instantiate Authomatic.
 authomatic = Authomatic(CONFIG, 'AnderG3h3impi3Hi3rzo!', report_errors=False)
+
+sentry_sdk.init(
+    dsn="https://e873b73e2f9b4016856461703a2fe233@o561444.ingest.sentry.io/5698868",
+    integrations=[FlaskIntegration()],
+    traces_sample_rate=1.0
+)
 
 app = Flask(__name__, template_folder='html')
 app.config['SECRET_KEY'] = 'Sup3rgeheimhee!'
@@ -146,6 +154,10 @@ def deleteRecord():
     return jsonify({
         'message': 'deleted...'
     })
+
+@app.route('/debug-sentry')
+def trigger_error():
+    division_by_zero = 1 / 0
 
 if __name__ == '__main__':
     app.run(
