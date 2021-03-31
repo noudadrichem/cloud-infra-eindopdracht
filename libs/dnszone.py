@@ -37,7 +37,7 @@ class DnsZone:
         # Create resolver object using not the system resolver settings ...
         self.resolver = dns.resolver.Resolver(configure=False)
         # ... but the provided nameserver
-        self.resolver.nameservers = [ self.nameserver ]
+        self.resolver.nameservers = [ self.nameserver, '8.8.8.8' ]
         self.timeout = timeout
     #fed __init__
 
@@ -68,6 +68,7 @@ class DnsZone:
         except dns.exception.Timeout:
             return { 'error' : True , 'error_text' : f'connection to nameserver {self.nameserver} timed out' }, 503
         except dns.resolver.NXDOMAIN:
+            print('dns.resolver..', dns.resolver.NXDOMAIN)
             return { 'error' : True , 'error_text' : f'{fqdn} not found' }, 404
 
     #fed check_address

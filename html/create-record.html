@@ -62,26 +62,30 @@
                 return prev
             }, {})
             console.log('body', body)
-            // TODO post to create record here...
-            fetch('/records/create', {
-                method: 'POST',
-                body: JSON.stringify(body),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-            })
-                .then(s => s.json())
-                .then(response => {
-                    console.log('gelukt...', response)
-                    message('Gelukt!', 'success')
-                    // setTimeout(() => window.location.href = '/', 1000)
-                    form.reset()
+            if (body.domain.includes('eindopdracht.test')) {
+                // TODO post to create record here...
+                fetch('/records/create', {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
                 })
-                .catch(err => {
-                    console.error(err)
-                    message('Failed...', 'error')
-                })
+                    .then(s => s.json())
+                    .then(response => {
+                        console.log('gelukt...', response)
+                        message('Gelukt!', 'success')
+                        // setTimeout(() => window.location.href = '/', 1000)
+                        form.reset()
+                    })
+                    .catch(err => {
+                        console.error(err)
+                        message('Failed...', 'error')
+                    })
+            } else {
+                message('Domain must contain eindopdracht.test', 'error')
+            }
         }
         const form = document.querySelector('#create-record-form')
         form.onsubmit = onFormSubmit
@@ -95,9 +99,9 @@
     <p>Fill in an ipv4 formatted IP and a domain name to create a record.</p>
     <form id="create-record-form">
         <label for="ipv4">IPV4</label>
-        <input type="text" name="ipv4" placeholder="1.1.1.1">
+        <input type="text" name="ipv4" placeholder="89.220.123.18">
         <label for="domain">A record</label>
-        <input type="text" name="domain" placeholder="paulennoud.com">
+        <input type="text" name="domain" value="eindopdracht.test" placeholder="???.eindopdracht.test">
         <input type="text" name="subdomain" value="*" placeholder="CNAME" hidden>
 
         <input type="text" name="ipv6" value="null" placeholder="CNAME" hidden>

@@ -11,6 +11,7 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from services.databaseService import DatabaseService
 from services.userService import UserService
 from services.recordService import RecordService
+from services.dnsService import DNSService
 from config import CONFIG
 
 # Instantiate Authomatic.
@@ -28,6 +29,7 @@ app.config['SECRET_KEY'] = 'Sup3rgeheimhee!'
 db = DatabaseService()
 userService = UserService(db)
 recordService = RecordService(db)
+dnsService = DNSService()
 
 def getUserFromSes():
     token = request.headers.get('Token')
@@ -134,6 +136,10 @@ def createRecord():
         'user': body['user'],
         'createdAt': datetime.datetime.now()
     })
+
+    print('ADD ARGS...', record['domain'], record['ipv4'])
+    dnsService.add(record['domain'], record['ipv4'])
+
     print('created record...', record)
 
     return jsonify(record)
@@ -145,6 +151,8 @@ def updateRecord():
         redirect('/')
     body = request.json
     print(body)
+    print('UPDATE ARGS...', body['domain'], body['ipv4'])
+    dnsService.update(body['domain'], body['ipv4'])
     record = recordService.update(body)
     return jsonify(record)
 
@@ -152,10 +160,12 @@ def updateRecord():
 def deleteRecord():
     body = request.json
     user = getUserFromSes()
+    record = recordService.getById(body['id'])
     if user == None:
         redirect('/')
-    print('Delete record...', body)
-    recordService.delete(body['id'])
+    print('delete record...', record)
+    dnsService.delete(record['domain'])
+    recordService.delete(record['_id'])
     return jsonify({
         'message': 'deleted...'
     })
