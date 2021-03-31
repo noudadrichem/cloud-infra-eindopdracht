@@ -127,9 +127,8 @@ class DnsZone:
         try:
             return { 'error' : True, 'error_text' : f'{fqdn} resolves to {self.resolver.resolve(fqdn).response.answer[0][0].address}' }
         except dns.resolver.NXDOMAIN:
-            return { ip : 'not found' }
+            return { 'ipv4' : 'not found' }
     #fed clear_address
-
 
 
 
