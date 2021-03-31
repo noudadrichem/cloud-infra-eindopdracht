@@ -11,7 +11,6 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from services.databaseService import DatabaseService
 from services.userService import UserService
 from services.recordService import RecordService
-from services.jwtService import JWTService
 from config import CONFIG
 
 # Instantiate Authomatic.
@@ -29,7 +28,6 @@ app.config['SECRET_KEY'] = 'Sup3rgeheimhee!'
 db = DatabaseService()
 userService = UserService(db)
 recordService = RecordService(db)
-jwtService = JWTService()
 
 def getUserFromSes():
     token = request.headers.get('Token')
@@ -43,6 +41,13 @@ def getUserFromSes():
         redirect('/')
     print('user...', user)
     return user
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({
+        'message': 'logged out'
+    })
 
 @app.route('/')
 def index():

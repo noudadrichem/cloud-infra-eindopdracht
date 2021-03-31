@@ -46,8 +46,23 @@
             <ul id="records-list">Loading dns records...</ul>
         </div>
 
+
+        <br><br>
+        <button class="btn secondary danger" type="button" id="logout-btn">Logout</button>
+
+
     <script type="text/javascript">
         window.addEventListener('DOMContentLoaded', function (e) {
+            function logout(e) {
+                fetch('/logout', { method: 'POST' })
+                .then(s => s.json())
+                .then(response  => {
+                    document.cookie = ''
+                    document.cookie = "session=weg";
+                    window.location.href = '/'
+                })
+            }
+            document.querySelector('#logout-btn').onclick = logout
             // [
             //     {
             //         "_id": "605db96627e307b2e4e3d211",
