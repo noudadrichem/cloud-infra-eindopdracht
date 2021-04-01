@@ -10,9 +10,9 @@
             container.innerText = msg
             container.className = type
             container.style.display = 'block'
-            setTimeout(() => {
-                container.style.display = 'none'
-            }, 5500)
+            // setTimeout(() => {
+            //     container.style.display = 'none'
+            // }, 5500)
         }
 
         function goHome() {
@@ -40,8 +40,7 @@
                 .then(s => s.json())
                 .then(response => {
                     console.log('gelukt...', response)
-                    message('Record verwijderd...', 'success')
-                    setTimeout(goHome, 700)
+                    message('Record verwijderd', 'success')
                 })
                 .catch(err => {
                     console.error(err)
