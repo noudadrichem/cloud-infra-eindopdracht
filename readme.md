@@ -1,19 +1,11 @@
-# Cloud infra eindopdracht
+# Cloud infra eindopdracht (Frog DNS)
 
-# <a href="http://cim-eindopracht.azurewebsites.net/">http://cim-eindopracht.azurewebsites.net/</a>
+Dynamic DNS service based on cloud principles. Service principles are basically Duck DNS but with our own DNS environment. Made with another student of HU.
+The service is currently offline. (Because Azure is expensive AF and no one uses this)
 
 > Small demo video : https://jmp.sh/YNGH0X9 More UI below.
 
 > Note: has 192.168.37.100 and 127.0.0.1 Ips whitelisted for Google Auth
-
-- [x] Externe authenticatie via Google
-- [x] Storage via Mongo (atlas cloud provider)
-- [x] Rest interface. CRUD voor records
-- [x] Token security (nu via UUID, zou het zelf via JWT doen)
-- [x] Records toevoegen via UI
-- [x] Via API api records verwijderen/aanpassen
-- [x] API authenticatie via Token (is dus ook UUID van user in Header)
-
 
 ## Uses
 - Google Oauth2 - Authentication 
